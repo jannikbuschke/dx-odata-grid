@@ -21,16 +21,16 @@
     "@devexpress/dx-react-grid-bootstrap3": ">= 1.9.1"
   },
   "devDependencies": {
-    "antd": "^3.13.1",
-    "@jbuschke/react-odata": "^0.1.0",
     "@devexpress/dx-react-core": "^1.9.1",
     "@devexpress/dx-react-grid": "^1.9.1",
     "@devexpress/dx-react-grid-bootstrap3": "^1.9.1",
-    "@types/node": "^10.12.18",
+    "@jbuschke/react-odata": "^0.1.0",
     "@types/jest": "^23.3.9",
+    "@types/node": "^10.12.21",
     "@types/react-dom": "^16.0.11",
-    "typescript": "^3.2.2",
+    "antd": "^3.13.1",
     "react": "16.8.0-alpha.0",
-    "react-dom": "16.8.0-alpha.0"
+    "react-dom": "16.8.0-alpha.0",
+    "typescript": "^3.3.1"
   }
 }

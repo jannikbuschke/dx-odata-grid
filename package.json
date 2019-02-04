@@ -3,8 +3,7 @@
   "version": "0.1.1",
   "private": false,
   "files": [
-    "lib",
-    "main.js"
+    "lib"
   ],
   "main": "./lib/index.js",
   "types": "./lib/types.d.ts",
@@ -12,9 +11,7 @@
     "tsc": "tsc",
     "watch": "tsc --watch"
   },
-  "dependencies": {
-    "@aspnet/signalr": "^1.0.4"
-  },
+  "dependencies": {},
   "peerDependencies": {
     "antd": ">= 3.13.1 < 4",
     "react": ">= 16.8.0-alpha.0 < 17",
@@ -30,7 +27,6 @@
     "@devexpress/dx-react-grid": "^1.9.1",
     "@devexpress/dx-react-grid-bootstrap3": "^1.9.1",
     "@types/node": "^10.12.18",
-    "@reach/router": "^1.2.1",
     "@types/jest": "^23.3.9",
     "@types/react-dom": "^16.0.11",
     "typescript": "^3.2.2",

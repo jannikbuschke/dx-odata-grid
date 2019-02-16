@@ -34,7 +34,6 @@ import { Spin } from "antd";
 export interface IOdataListProps {
   columns: Column[];
   additionalParameters?: string[];
-  path?: string;
   odataPath: string;
   expand?: string;
   tableColumnResizingProps?: TableColumnResizingProps;
@@ -76,6 +75,7 @@ const toOdataFilter = (
     .filter(v => v.value);
 
 export const List = ({
+  additionalParameters,
   columns,
   expand,
   odataPath,
@@ -110,8 +110,12 @@ export const List = ({
   }, []);
 
   const { data, loading, error } = useRemoteJson(
-    `${odataPath}?api-version=1.0&${query}${
-      expand ? `&$expand=${expand}&$count=true` : ""
+    `${odataPath}?api-version=1.0&$count=true&${query}${
+      expand ? `&$expand=${expand}` : ""
+    }${
+      additionalParameters
+        ? additionalParameters.reduce((prev, curr) => `${prev}&${curr}`, "&")
+        : ""
     }`
   );
 
@@ -156,7 +160,6 @@ export const List = ({
             setTop(newPageSize);
           }}
         />
-        <CustomPaging totalCount={data ? data["@odata.count"] : 0} />
         {rowComponent ? <Table rowComponent={rowComponent} /> : <Table />}
         <CustomPaging totalCount={data ? data["@odata.count"] : undefined} />
         {tableColumnResizingProps && (

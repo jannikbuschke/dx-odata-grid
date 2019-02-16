@@ -3,8 +3,7 @@
   "version": "0.2.0",
   "private": false,
   "files": [
-    "lib",
-    "main.js"
+    "lib"
   ],
   "main": "./lib/index.js",
   "types": "./lib/types.d.ts",

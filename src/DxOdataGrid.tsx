@@ -39,6 +39,11 @@ export interface IOdataListProps {
   tableColumnResizingProps?: TableColumnResizingProps;
   filters?: Filters;
   rowComponent?: any;
+  paginate?: boolean;
+  initialSorting?: Sorting[];
+  initialPageSize?: number;
+  showFilters?: boolean;
+  showTitles?: boolean;
 }
 
 export interface FilterValue {
@@ -81,16 +86,29 @@ export const List = ({
   odataPath,
   tableColumnResizingProps,
   rowComponent,
-  filters = {}
+  filters = {},
+  paginate = true,
+  initialSorting = [],
+  showFilters = true,
+  showTitles = true,
+  initialPageSize
 }: IOdataListProps) => {
-  const { query, setSkip, setTop, setFilters, setOrderBy } = useOdata();
+  const { query, setSkip, setTop, top, setFilters, setOrderBy } = useOdata({
+    initialPageSize,
+    initialOrderBy: initialSorting.map(v => ({
+      name: v.columnName,
+      direction: v.direction
+    }))
+  });
+
+  // should be computed from top/skip
   const [page, setPage] = useState(0);
-  const [pageSize, setPageSize] = useState(20);
+
   const [gridFilters, setGridFilters] = useState<Filter[]>([]);
   const [filterColumnExtensions, setFilterColumnExtensions] = useState<
     FilteringState.ColumnExtension[]
   >([]);
-  const [sorting, setSorting] = useState<Sorting[]>([]);
+  const [sorting, setSorting] = useState<Sorting[]>(initialSorting);
   React.useEffect(() => {
     if (filters) {
       const gridFilters = Object.keys(filters).map(column => ({
@@ -99,7 +117,6 @@ export const List = ({
       }));
       setGridFilters(gridFilters);
       setFilters(toOdataFilter(gridFilters, filters));
-
       setFilterColumnExtensions(
         Object.keys(filters).map(column => ({
           columnName: column,
@@ -110,7 +127,7 @@ export const List = ({
   }, []);
 
   const { data, loading, error } = useRemoteJson(
-    `${odataPath}?api-version=1.0&$count=true&${query}${
+    `${odataPath}?api-version=1.0${paginate ? "&$count=true" : ""}&${query}${
       expand ? `&$expand=${expand}` : ""
     }${
       additionalParameters
@@ -150,12 +167,10 @@ export const List = ({
           currentPage={page}
           onCurrentPageChange={(currentPage: number) => {
             setPage(currentPage);
-            setSkip(pageSize * currentPage);
-            setTop(pageSize);
+            setSkip(top * currentPage);
           }}
-          pageSize={pageSize}
+          pageSize={top}
           onPageSizeChange={(newPageSize: number) => {
-            setPageSize(newPageSize);
             setSkip(newPageSize * page);
             setTop(newPageSize);
           }}
@@ -165,9 +180,9 @@ export const List = ({
         {tableColumnResizingProps && (
           <TableColumnResizing {...tableColumnResizingProps} />
         )}
-        <TableHeaderRow showSortingControls={true} />
-        <TableFilterRow />
-        <PagingPanel pageSizes={[10, 20, 50]} />
+        {showTitles && <TableHeaderRow showSortingControls={true} />}
+        {showFilters && <TableFilterRow />}
+        {paginate && <PagingPanel pageSizes={[10, 20, 50]} />}
       </Grid>
     </Spin>
   );

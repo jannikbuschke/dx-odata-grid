@@ -1,2 +1,2 @@
-export * from "./DxOdataGrid";
+export * from "./List";
 export * from "./useRemoteJson";

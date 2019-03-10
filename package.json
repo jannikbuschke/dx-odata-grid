@@ -1,6 +1,6 @@
 {
   "name": "@jbuschke/dx-odata-grid",
-  "version": "0.2.0",
+  "version": "0.2.2",
   "private": false,
   "files": [
     "lib"
@@ -18,13 +18,13 @@
     "@devexpress/dx-react-core": ">= 1.9.1",
     "@devexpress/dx-react-grid": ">= 1.9.1",
     "@devexpress/dx-react-grid-bootstrap3": ">= 1.9.1",
-    "@jbuschke/react-odata": ">= 0.1.0"
+    "@jbuschke/react-odata": "0.2.2"
   },
   "devDependencies": {
     "@devexpress/dx-react-core": "^1.9.1",
     "@devexpress/dx-react-grid": "^1.9.1",
     "@devexpress/dx-react-grid-bootstrap3": "^1.9.1",
-    "@jbuschke/react-odata": "0.2.1",
+    "@jbuschke/react-odata": "0.2.2",
     "@types/jest": "24.0.9",
     "@types/node": "11.10.4",
     "@types/react-dom": "16.8.2",

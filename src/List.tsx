@@ -24,7 +24,7 @@ import {
 import {
   useOdata,
   FilterOperand,
-  DataType,
+  DataType as filterDisabled,
   OdataFilter
 } from "@jbuschke/react-odata";
 import { useState } from "react";
@@ -49,9 +49,9 @@ export interface IOdataListProps {
 }
 
 export interface FilterValue {
-  operand?: FilterOperand;
-  dataType?: DataType;
-  disabled?: boolean;
+  filterOperand?: FilterOperand;
+  dataType?: filterDisabled;
+  filterDisabled?: boolean;
   initialValue?: string;
   name: string;
 }
@@ -75,7 +75,7 @@ const toOdataFilter = (
             ? filterProps[v.columnName].dataType
             : "string",
           operand: filterProps[v.columnName]
-            ? filterProps[v.columnName].operand
+            ? filterProps[v.columnName].filterOperand
             : "equals",
           value: v.value!
         } as OdataFilter)
@@ -108,9 +108,9 @@ export const List = ({
     (v): FilterValue => ({
       name: v.name,
       dataType: v.dataType,
-      disabled: v.disabled,
+      filterDisabled: v.filterDisabled,
       initialValue: v.initialValue,
-      operand: v.operand
+      filterOperand: v.filterOperand
     })
   );
 
@@ -136,7 +136,7 @@ export const List = ({
       setFilterColumnExtensions(
         Object.keys(filters).map(column => ({
           columnName: column,
-          filteringEnabled: !filters[column].disabled!
+          filteringEnabled: !filters[column].filterDisabled!
         }))
       );
     }

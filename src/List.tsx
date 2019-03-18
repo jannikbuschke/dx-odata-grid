@@ -31,13 +31,14 @@ import { useState } from "react";
 import { useRemoteJson } from "./useRemoteJson";
 import { Spin, Alert } from "antd";
 
+interface ListColumn extends Column, FilterValue {}
+
 export interface IOdataListProps {
-  columns: Column[];
+  columns: ListColumn[];
   additionalParameters?: string[];
   odataPath: string;
   expand?: string;
   tableColumnResizingProps?: TableColumnResizingProps;
-  filters?: Filters;
   rowComponent?: any;
   paginate?: boolean;
   initialSorting?: Sorting[];
@@ -52,6 +53,7 @@ export interface FilterValue {
   dataType?: DataType;
   disabled?: boolean;
   initialValue?: string;
+  name: string;
 }
 
 export interface Filters {
@@ -87,7 +89,6 @@ export const List = ({
   odataPath,
   tableColumnResizingProps,
   rowComponent,
-  filters = {},
   paginate = true,
   initialSorting = [],
   showFilters = true,
@@ -102,6 +103,19 @@ export const List = ({
       direction: v.direction
     }))
   });
+
+  const filterValues: FilterValue[] = columns.map(
+    (v): FilterValue => ({
+      name: v.name,
+      dataType: v.dataType,
+      disabled: v.disabled,
+      initialValue: v.initialValue,
+      operand: v.operand
+    })
+  );
+
+  const filters: Filters = {};
+  filterValues.forEach(v => (filters[v.name] = v));
 
   // should be computed from top/skip
   const [page, setPage] = useState(0);

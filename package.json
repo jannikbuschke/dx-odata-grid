@@ -21,14 +21,14 @@
     "@jbuschke/react-odata": "0.2.2"
   },
   "devDependencies": {
-    "@devexpress/dx-react-core": "^1.9.1",
-    "@devexpress/dx-react-grid": "^1.9.1",
-    "@devexpress/dx-react-grid-bootstrap3": "^1.9.1",
+    "@devexpress/dx-react-core": "1.9.1",
+    "@devexpress/dx-react-grid": "1.9.1",
+    "@devexpress/dx-react-grid-bootstrap3": "1.9.1",
     "@jbuschke/react-odata": "0.2.2",
     "@types/jest": "24.0.9",
     "@types/node": "11.10.4",
     "@types/react-dom": "16.8.2",
-    "immer": "^1.9.3",
+    "immer": "1.9.3",
     "antd": "3.13.6",
     "tslib": "1.9.3",
     "typescript": "3.3.3333"

@@ -8,7 +8,11 @@ import {
   FilteringState,
   Filter,
   Column,
-  Sorting
+  Sorting,
+  DataTypeProvider,
+  FilterExpression,
+  GroupingState,
+  IntegratedGrouping
 } from "@devexpress/dx-react-grid";
 
 import {
@@ -17,13 +21,14 @@ import {
   Table,
   TableHeaderRow,
   TableFilterRow,
-  TableColumnResizing
+  TableColumnResizing,
+  TableGroupRow
   // tslint:disable-next-line:no-implicit-dependencies
 } from "@devexpress/dx-react-grid-bootstrap3";
 
 import {
   useOdata,
-  FilterOperand,
+  FilterOperation,
   DataType as filterDisabled,
   OdataFilter
 } from "@jbuschke/react-odata";
@@ -46,11 +51,14 @@ export interface IOdataListProps {
   initialPageSize?: number;
   showFilters?: boolean;
   showTitles?: boolean;
+  showFilterSelector?: boolean;
+  groupBy?: string[];
   addHeaders?: () => Promise<HeadersInit>;
 }
 
 export interface FilterValue {
-  filterOperand?: FilterOperand;
+  filterOperand?: FilterOperation;
+  filterOperations?: FilterOperation[];
   dataType?: filterDisabled;
   filterDisabled?: boolean;
   initialValue?: string;
@@ -61,13 +69,13 @@ export interface Filters {
   [name: string]: FilterValue;
 }
 
-const getRowId = (row: any) => row.id;
+const defaultGetRowId = (row: any) => row.id;
 
 const toOdataFilter = (
   filters: Filter[],
   filterProps: Filters
-): OdataFilter[] =>
-  filters
+): OdataFilter[] => {
+  return filters
     .map(
       v =>
         ({
@@ -75,15 +83,16 @@ const toOdataFilter = (
           dataType: filterProps[v.columnName]
             ? filterProps[v.columnName].dataType
             : "string",
-          operand: filterProps[v.columnName]
-            ? filterProps[v.columnName].filterOperand
-            : "equals",
+          operation: v.operation,
           value: v.value!
         } as OdataFilter)
     )
     .filter(v => v.value);
+};
 
 export const List = ({
+  groupBy,
+  getRowId,
   additionalParameters,
   columns,
   expand,
@@ -95,7 +104,8 @@ export const List = ({
   showFilters = true,
   showTitles = true,
   initialPageSize,
-  addHeaders
+  addHeaders,
+  showFilterSelector
 }: IOdataListProps) => {
   const { query, setSkip, setTop, top, setFilters, setOrderBy } = useOdata({
     initialPageSize,
@@ -168,10 +178,18 @@ export const List = ({
         />
       ) : (
         <Grid
-          rows={data ? (data.value ? data.value : []) : []}
+          rows={data && data.value ? data.value : []}
           columns={columns || []}
-          getRowId={getRowId}
+          getRowId={getRowId ? getRowId : defaultGetRowId}
         >
+          {columns
+            .filter(v => v.filterOperations)
+            .map(v => (
+              <DataTypeProvider
+                for={[v.name]}
+                availableFilterOperations={v.filterOperations}
+              />
+            ))}
           <FilteringState
             filters={gridFilters}
             onFiltersChange={(gridFilters: Filter[]) => {
@@ -192,6 +210,17 @@ export const List = ({
               );
             }}
           />
+          {groupBy && data && data.value ? (
+            <GroupingState
+              grouping={groupBy.map(v => ({ columnName: v }))}
+              expandedGroups={Array.from(
+                new Set(data.value.map((v: any) => "" + v.weekInYear))
+              )}
+            />
+          ) : (
+            <GroupingState />
+          )}
+          {groupBy && <IntegratedGrouping />}
           <PagingState
             currentPage={page}
             onCurrentPageChange={(currentPage: number) => {
@@ -210,7 +239,10 @@ export const List = ({
             <TableColumnResizing {...tableColumnResizingProps} />
           )}
           {showTitles && <TableHeaderRow showSortingControls={true} />}
-          {showFilters && <TableFilterRow />}
+          {showFilters && (
+            <TableFilterRow showFilterSelector={showFilterSelector} />
+          )}
+          {groupBy && <TableGroupRow />}
           {paginate && <PagingPanel pageSizes={[10, 20, 50]} />}
         </Grid>
       )}

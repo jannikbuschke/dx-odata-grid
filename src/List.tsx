@@ -34,6 +34,7 @@ import { Spin, Alert } from "antd";
 interface ListColumn extends Column, FilterValue {}
 
 export interface IOdataListProps {
+  getRowId?: (row: any) => any;
   columns: ListColumn[];
   additionalParameters?: string[];
   odataPath: string;

@@ -6,8 +6,9 @@ export const useRemoteJson = (
   addHeaders?: () => Promise<HeadersInit>
 ) => {
   const [data, setData] = useState<any>(placeholder ? placeholder : null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [key, setKey] = useState(Math.random());
 
   const getHeaders = async () => {
     const additionalHeaders = addHeaders ? await addHeaders() : {};
@@ -17,6 +18,7 @@ export const useRemoteJson = (
   };
 
   useEffect(() => {
+    setLoading(true);
     getHeaders()
       .then(headers => fetch(uri, { headers }))
       .then(r => {
@@ -36,7 +38,7 @@ export const useRemoteJson = (
         setError(e.toString());
         setLoading(false);
       });
-  }, [uri]);
+  }, [uri, key]);
 
-  return { data, loading, error };
+  return { data, loading, error, reload: () => setKey(Math.random()) };
 };

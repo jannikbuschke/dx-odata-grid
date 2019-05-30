@@ -28,7 +28,7 @@ import {
 
 import {
   useOdata,
-  FilterOperation,
+  FilterOperand as FilterOperation,
   DataType as filterDisabled,
   OdataFilter
 } from "@jbuschke/react-odata";
@@ -83,7 +83,7 @@ const toOdataFilter = (
           dataType: filterProps[v.columnName]
             ? filterProps[v.columnName].dataType
             : "string",
-          operation: v.operation,
+          operand: v.operation,
           value: v.value!
         } as OdataFilter)
     )

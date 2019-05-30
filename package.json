@@ -9,7 +9,8 @@
   "types": "./lib/types.d.ts",
   "scripts": {
     "tsc": "tsc --version && tsc",
-    "watch": "tsc --watch"
+    "watch": "tsc --watch",
+    "prettier": "prettier --write src/**/*.* package.json"
   },
   "peerDependencies": {
     "antd": ">= 3.13.1 < 4",

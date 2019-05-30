@@ -1,2 +1,2 @@
-export * from "./List";
-export * from "./useRemoteJson";
+export * from "./List"
+export * from "./useRemoteJson"

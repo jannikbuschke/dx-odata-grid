@@ -36,24 +36,25 @@ import { useState } from "react"
 import { useRemoteJson } from "./useRemoteJson"
 import { Spin, Alert } from "antd"
 
-interface ListColumn extends Column, FilterValue {}
+interface ListColumn extends Column, FilterValue { }
 
 export interface IOdataListProps {
-  getRowId?: (row: any) => any
-  columns: ListColumn[]
-  additionalParameters?: string[]
-  odataPath: string
-  expand?: string
-  tableColumnResizingProps?: TableColumnResizingProps
-  rowComponent?: any
-  paginate?: boolean
-  initialSorting?: Sorting[]
-  initialPageSize?: number
-  showFilters?: boolean
-  showTitles?: boolean
-  showFilterSelector?: boolean
-  groupBy?: string[]
-  addHeaders?: () => Promise<HeadersInit>
+  getRowId?: (row: any) => any;
+  columns: ListColumn[];
+  additionalParameters?: string[];
+  odataPath: string;
+  expand?: string;
+  tableColumnResizingProps?: TableColumnResizingProps;
+  rowComponent?: any;
+  paginate?: boolean;
+  initialSorting?: Sorting[];
+  initialPageSize?: number;
+  showFilters?: boolean;
+  showTitles?: boolean;
+  showFilterSelector?: boolean;
+  groupBy?: string[];
+  addHeaders?: () => Promise<HeadersInit>;
+  reload?: any;
 }
 
 export interface FilterValue {
@@ -83,7 +84,7 @@ const toOdataFilter = (
           dataType: filterProps[v.columnName]
             ? filterProps[v.columnName].dataType
             : "string",
-          operand: v.operation,
+          operation: v.operation,
           value: v.value!,
         } as OdataFilter),
     )
@@ -106,6 +107,7 @@ export const List = ({
   initialPageSize,
   addHeaders,
   showFilterSelector,
+  reload
 }: IOdataListProps) => {
   const { query, setSkip, setTop, top, setFilters, setOrderBy } = useOdata({
     initialPageSize,
@@ -155,15 +157,16 @@ export const List = ({
 
   const { data, loading, error } = useRemoteJson(
     `${odataPath}?api-version=1.0${paginate ? "&$count=true" : ""}&${query}${
-      expand ? `&$expand=${expand}` : ""
+    expand ? `&$expand=${expand}` : ""
     }${
-      additionalParameters
-        ? additionalParameters.reduce((prev, curr) => `${prev}&${curr}`, "&")
-        : ""
+    additionalParameters
+      ? additionalParameters.reduce((prev, curr) => `${prev}&${curr}`, "&")
+      : ""
     }`,
     {},
     addHeaders,
-  )
+    reload
+  );
 
   return (
     <Spin spinning={loading} delay={data ? 150 : 0}>
@@ -177,75 +180,75 @@ export const List = ({
           style={{ marginBottom: 10 }}
         />
       ) : (
-        <Grid
-          rows={data && data.value ? data.value : []}
-          columns={columns || []}
-          getRowId={getRowId ? getRowId : defaultGetRowId}
-        >
-          {columns
-            .filter((v) => v.filterOperations)
-            .map((v) => (
-              <DataTypeProvider
-                for={[v.name]}
-                availableFilterOperations={v.filterOperations}
-              />
-            ))}
-          <FilteringState
-            filters={gridFilters}
-            onFiltersChange={(gridFilters: Filter[]) => {
-              setGridFilters(gridFilters)
-              setFilters(toOdataFilter(gridFilters, filters!))
-            }}
-            columnExtensions={filterColumnExtensions}
-          />
-          <SortingState
-            sorting={sorting || []}
-            onSortingChange={(sorting) => {
-              setSorting(sorting)
-              setOrderBy(
-                sorting.map((v) => ({
-                  name: v.columnName,
-                  direction: v.direction,
-                })),
-              )
-            }}
-          />
-          {groupBy && data && data.value ? (
-            <GroupingState
-              grouping={groupBy.map((v) => ({ columnName: v }))}
-              expandedGroups={Array.from(
-                new Set(data.value.map((v: any) => "" + v.weekInYear)),
-              )}
+          <Grid
+            rows={data && data.value ? data.value : []}
+            columns={columns || []}
+            getRowId={getRowId ? getRowId : defaultGetRowId}
+          >
+            {columns
+              .filter(v => v.filterOperations)
+              .map(v => (
+                <DataTypeProvider
+                  for={[v.name]}
+                  availableFilterOperations={v.filterOperations}
+                />
+              ))}
+            <FilteringState
+              filters={gridFilters}
+              onFiltersChange={(gridFilters: Filter[]) => {
+                setGridFilters(gridFilters);
+                setFilters(toOdataFilter(gridFilters, filters!));
+              }}
+              columnExtensions={filterColumnExtensions}
             />
-          ) : (
-            <GroupingState />
-          )}
-          {groupBy && <IntegratedGrouping />}
-          <PagingState
-            currentPage={page}
-            onCurrentPageChange={(currentPage: number) => {
-              setPage(currentPage)
-              setSkip(top * currentPage)
-            }}
-            pageSize={top}
-            onPageSizeChange={(newPageSize: number) => {
-              setSkip(newPageSize * page)
-              setTop(newPageSize)
-            }}
-          />
-          {rowComponent ? <Table rowComponent={rowComponent} /> : <Table />}
-          <CustomPaging totalCount={data ? data["@odata.count"] : undefined} />
-          {tableColumnResizingProps && (
-            <TableColumnResizing {...tableColumnResizingProps} />
-          )}
-          {showTitles && <TableHeaderRow showSortingControls={true} />}
-          {showFilters && (
-            <TableFilterRow showFilterSelector={showFilterSelector} />
-          )}
-          {groupBy && <TableGroupRow />}
-          {paginate && <PagingPanel pageSizes={[10, 20, 50]} />}
-        </Grid>
-      )}
+            <SortingState
+              sorting={sorting || []}
+              onSortingChange={sorting => {
+                setSorting(sorting);
+                setOrderBy(
+                  sorting.map(v => ({
+                    name: v.columnName,
+                    direction: v.direction
+                  }))
+                );
+              }}
+            />
+            {groupBy && data && data.value ? (
+              <GroupingState
+                grouping={groupBy.map(v => ({ columnName: v }))}
+                expandedGroups={Array.from(
+                  new Set(data.value.map((v: any) => "" + v.weekInYear))
+                )}
+              />
+            ) : (
+                <GroupingState />
+              )}
+            {groupBy && <IntegratedGrouping />}
+            <PagingState
+              currentPage={page}
+              onCurrentPageChange={(currentPage: number) => {
+                setPage(currentPage);
+                setSkip(top * currentPage);
+              }}
+              pageSize={top}
+              onPageSizeChange={(newPageSize: number) => {
+                setSkip(newPageSize * page);
+                setTop(newPageSize);
+              }}
+            />
+            {rowComponent ? <Table rowComponent={rowComponent} /> : <Table />}
+            <CustomPaging totalCount={data ? data["@odata.count"] : undefined} />
+            {tableColumnResizingProps && (
+              <TableColumnResizing {...tableColumnResizingProps} />
+            )}
+            {showTitles && <TableHeaderRow showSortingControls={true} />}
+            {showFilters && (
+              <TableFilterRow showFilterSelector={showFilterSelector} />
+            )}
+            {groupBy && <TableGroupRow />}
+            {paginate && <PagingPanel pageSizes={[10, 20, 50]} />}
+          </Grid>
+        )}
     </Spin>
   )
 }

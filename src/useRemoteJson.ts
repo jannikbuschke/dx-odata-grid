@@ -4,6 +4,7 @@ export const useRemoteJson = (
   uri: string,
   placeholder?: any,
   addHeaders?: () => Promise<HeadersInit>,
+  deps?: any
 ) => {
   const [data, setData] = useState<any>(placeholder ? placeholder : null)
   const [loading, setLoading] = useState(false)
@@ -34,11 +35,11 @@ export const useRemoteJson = (
         setData(data)
         setLoading(false)
       })
-      .catch((e) => {
-        setError(e.toString())
-        setLoading(false)
-      })
-  }, [uri, key])
+      .catch(e => {
+        setError(e.toString());
+        setLoading(false);
+      });
+  }, [uri, key, deps]);
 
   return { data, loading, error, reload: () => setKey(Math.random()) }
 }

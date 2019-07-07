@@ -28,7 +28,7 @@ import {
 
 import {
   useOdata,
-  FilterOperand as FilterOperation,
+  FilterOperation,
   DataType as filterDisabled,
   OdataFilter,
 } from "@jbuschke/react-odata"
